@@ -1,0 +1,214 @@
+<!doctype html>
+<html>
+<!--Materialize CSS--->
+<head>
+	<meta name="viewport" content="width = device-width, initial-scale = 1">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
+	</script>
+	<title>Shop</title>
+	<style>
+	#rightCol {
+		margin-right: 10px;
+		float: right;
+		width: 250px;
+		height: 300px;
+		overflow-y: scroll;
+		overflow-x: hidden;
+	}
+	
+	#price {
+		position: fixed;
+		margin-right: 25px;
+		bottom: 0;
+		right: 0;
+		width: 200px;
+	}
+	
+	#content {
+		position: fixed;
+		margin-left: 5px;
+		width: 1095px;
+		height: 400px;
+		overflow-y: scroll;
+		overflow-x: hidden;
+	}
+	/*https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_custom_scrollbar2*/
+	/* width */
+	
+	::-webkit-scrollbar {
+		width: 20px;
+	}
+	/* Track */
+	
+	::-webkit-scrollbar-track {
+		box-shadow: inset 0 0 5px grey;
+		border-radius: 10px;
+	}
+	/* Handle */
+	
+	::-webkit-scrollbar-thumb {
+		background: #e57373;
+		border-radius: 10px;
+	}
+	/* Handle on hover */
+	
+	::-webkit-scrollbar-thumb:hover {
+		background: #f44336;
+	}
+	
+	.btnsearch {
+		font-size: 15px;
+		color: white;
+		border-radius: 20px;
+		padding: 5px 12px;
+		text-align: center;
+		text-decoration: none;
+		background-color: #e67373;
+		border: white;
+		margin-top: 25px;
+	}
+  .btnupdate {
+		font-size: 15px;
+		color: white;
+		border-radius: 20px;
+		background-color: #e67373;
+		border: white;
+	}
+	
+	.btnsearch:active {
+		background-color: #f44336;
+	}
+	
+	.itemtxt {
+		text-align: center;
+	}
+	
+	.cart {
+		border: 2px solid red;
+		border-radius: 4px;
+	}
+	
+	.inline-block-child {
+		display: inline-block;
+		position: fixed;
+		right: 140px;
+		top: 150px;
+	}
+  .cartitem {
+		border-style: groove;
+    padding: 2px 16px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    margin-top:10px;
+    border-radius: 20px;
+	}
+
+
+	</style>
+</head>
+
+<body>
+	<!--NAVIGATION START-->
+	<nav>
+		<div class="nav-wrapper"> <a href="/" class="brand-logo">Shop App</a> </div>
+	</nav>
+	<!--SAVIGATION END-->
+	<!--FLASH START-->{% with messages = get_flashed_messages() %} {% if messages %}
+	<nav class="white black-text" style="padding: 10px">
+		<div class="nav-wrapper">
+			<ul class="flashes"> {% for message in messages %}
+				<li>{{ message }}</li> {% endfor %} </ul>
+		</div>
+	</nav> {% endif %} 
+  {% endwith %}
+	<!--FLASH END-->
+	<!--SEARCHBAR START-->
+	<div class="row">
+		<form class="col s12" action="/search" method="POST">
+			<div class="row">
+				<div class="input-field col s3 m3"> <i class="material-icons prefix">search</i>
+					<input id="icon_prefix" type="text" class="validate" name="searchproduct">
+					<label for="icon_prefix">Search Product</label>
+				</div>
+				<button class="btnsearch" type="submit">Search</button>
+			</div>
+		</form>
+	</div>
+	<!--SEARCH BAR END-->
+	<!----CART LOGO------->
+	<div class='parent'>
+		<div class='child inline-block-child'><i class="material-icons">add_shopping_cart</i> </div>
+	</div>
+	<!--CART LOGO END-->
+	<div id="rightCol">
+		<!--Left Column START-->
+		<!--VIEW CART START-->
+    {% if not carts %}
+		<p class="itemtxt">No Items in Cart</p> 
+    {% else %}
+		<!---------EDIT HERE AND DONE------>
+
+    {% for item in carts %}
+    
+		<div class="cartitem">
+			<p>Name: {{item.product.name}}</p>
+			<p>Price: $ {{item.product.price}}</p>
+			<div>
+				<form action="/editCart/{{item.cid}}" method="POST">
+					<div>Quantity:</div>
+					<input type="number" step="1" min="0" max="" value="{{item.quantity}}" name="quantity" class="cart">
+					<button class="btnupdate" type="submit">Update</button>
+				</form>
+			</div>
+		</div>
+		<!---------EDIT HERE AND DONE------>
+
+    {% endfor %} 
+    {% endif %} </div>
+	<!--Left Column end-->
+	<!--CART PRICE START-->
+	<div id="price">
+		<h5>Totoal ${{total}}</h5> </div>
+	<!--CART PRICE end-->
+	<div id="content">
+		<!--CONTENT start-->
+		<!--SEARCH RESULTS CARD START-->
+    {% if results %}
+		<div class="row"> 
+      {% for item in results %}
+			<div class="col s3 m4">
+				<div class="card">
+					<div class="card-image waves-effect waves-block waves-light"> <img class="activator" src="{{item.image}}" width="200" height="300"> </div>
+					<div class="card-content"> <span class="card-title activator grey-text text-darken-4">$ {{item.price}}<i class="material-icons right">more_vert</i></span>
+						<p><a class="btn-floating  waves-effect waves-light red" href="/addProduct/{{item.id}}"><i class="material-icons">add_shopping_cart</i></a></p>
+					</div>
+					<div class="card-reveal"> <span class="card-title grey-text text-darken-4"><i class="material-icons right">close</i>{{item.name}}</span> <span class="card-title grey-text text-darken-4">-About</span>
+						<p>{{item.about}}</p>
+					</div>
+				</div>
+			</div> 
+      {% endfor %} </div> 
+      {% endif %}
+		<!--SEARCH RESULTS END-->
+		<!--VIEW ALL PRODUCTS CARD START-->
+		<div class="row"> {% for product in products %}
+			<div class="col s3 m4">
+				<div class="card">
+					<div class="card-image waves-effect waves-block waves-light"> <img class="activator" src="{{product.image}}" width="200" height="300"> </div>
+					<div class="card-content"><span class="card-title activator grey-text text-darken-4">$ {{product.price}}<i class="material-icons right">more_vert</i></span>
+						<p><a class="btn-floating  waves-effect waves-light red" href="/addProduct/{{product.id}}"><i class="material-icons">add_shopping_cart</i></a></p>
+					</div>
+					<div class="card-reveal"> <span class="card-title grey-text text-darken-4"><i class="material-icons right">close</i>{{product.name}}</span> <span class="card-title grey-text text-darken-4">-About-</span>
+						<p>{{product.about}}</p>
+					</div>
+				</div>
+			</div> 
+      {% endfor %} </div>
+		<!--VIEW ALL PRODUCTS END-->
+	</div>
+	<!--CONTENT END-->
+</body>
+
+</html>
