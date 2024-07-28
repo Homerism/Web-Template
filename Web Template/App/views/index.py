@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash, redirect, request, jsonify
+from flask import Blueprint, render_template, flash, redirect, request, jsonify, url_for
 from App.models import Product, Cart
 from App.database import db
 from flask_login import login_required, current_user
@@ -61,15 +61,15 @@ def edit_Cart(cid):
   cart = Cart.query.filter_by(cid=cid).first() #filters for the particular product in cart
   if data is None: #if no data was added and submit was clicked
     flash('Please Enter quantity...')
-    return redirect(url_for('index'))
+    return redirect(url_for('index_views.index'))
   if data <="0": #if data is less that or equal to zero the particular product is removed from cart
     db.session.delete(cart)
     db.session.commit()
     flash('Item was removed from cart!')
-    return redirect(url_for('index'))
+    return redirect(url_for('index_views.index'))
   else:
     cart.quantity = data #if data is greater than 0 the product quantity is updated
     db.session.add(cart)
     db.session.commit()
     flash('Item Quanity Updated!')
-  return redirect(url_for('index'))
+  return redirect(url_for('index_views.index'))

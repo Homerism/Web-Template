@@ -1,7 +1,7 @@
 from flask_cors import CORS
 from flask import Flask
 from App.database import db, create_db
-from App.initDB import import_products_from_csv
+from App.controllers import import_products_from_csv
 from importlib import import_module
 from App.models import models
 from App.views import views
