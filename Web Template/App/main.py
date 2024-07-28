@@ -1,6 +1,7 @@
 from flask_cors import CORS
 from flask import Flask
 from App.database import db, create_db
+from App.initDB import import_products_from_csv
 from importlib import import_module
 from App.models import models
 from App.views import views
@@ -26,11 +27,11 @@ def create_app():
   add_models(app)
   create_db(app)
   app.app_context().push()
+  import_products_from_csv('App/products.csv')
 
   return app
 
 ''' End Boilerplate Code '''
-
 
 # if __name__ == '__main__':
 #   app.run(host='0.0.0.0', port=8080, debug=True)
